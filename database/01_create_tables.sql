@@ -47,7 +47,7 @@ CREATE INDEX IF NOT EXISTS ix_municipio_id_departamento ON municipio (id_departa
 -- ------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS usuario (
-    id_usuario      SERIAL PRIMARY KEY,
+    numero_documento VARCHAR(15) PRIMARY KEY,
     nombre          VARCHAR(150) NOT NULL,
     telefono        VARCHAR(20)  NOT NULL,
     id_pais         INTEGER      NOT NULL REFERENCES pais (id_pais) ON DELETE RESTRICT,

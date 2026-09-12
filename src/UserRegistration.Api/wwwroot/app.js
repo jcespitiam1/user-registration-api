@@ -90,6 +90,7 @@ function limpiarErrores(form) {
 
 function mostrarErroresDeCampo(form, errors) {
   const camposPorClave = {
+    numerodocumento: "numero-documento",
     nombre: "nombre",
     telefono: "telefono",
     idpais: "pais",
@@ -113,7 +114,7 @@ function mostrarResultadoUsuario(contenedor, usuario) {
   contenedor.hidden = false;
   contenedor.innerHTML = `
     <dl>
-      <dt>Id</dt><dd>${usuario.idUsuario}</dd>
+      <dt>Documento</dt><dd>${usuario.numeroDocumento}</dd>
       <dt>Nombre</dt><dd>${usuario.nombre}</dd>
       <dt>Teléfono</dt><dd>${usuario.telefono}</dd>
       <dt>Ubicación</dt><dd>${usuario.municipioNombre}, ${usuario.departamentoNombre}, ${usuario.paisNombre}</dd>
@@ -135,6 +136,7 @@ formRegistro.addEventListener("submit", async (event) => {
   registroResultado.hidden = true;
 
   const payload = {
+    numeroDocumento: document.getElementById("numero-documento").value.trim(),
     nombre: document.getElementById("nombre").value.trim(),
     telefono: document.getElementById("telefono").value.trim(),
     idPais: Number(paisSelect.value),
@@ -156,6 +158,9 @@ formRegistro.addEventListener("submit", async (event) => {
     if (error.status === 400 && error.problem?.errors) {
       mostrarErroresDeCampo(formRegistro, error.problem.errors);
       mostrarError(registroResultado, "Revisa los campos marcados en el formulario.");
+    } else if (error.status === 409) {
+      mostrarErroresDeCampo(formRegistro, { NumeroDocumento: [error.problem?.detail ?? error.message] });
+      mostrarError(registroResultado, error.problem?.detail ?? error.message);
     } else {
       mostrarError(registroResultado, error.problem?.detail ?? error.message);
     }

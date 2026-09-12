@@ -2,7 +2,7 @@ namespace UserRegistration.Application.DTOs;
 
 public sealed class UsuarioResponse
 {
-    public int IdUsuario { get; init; }
+    public string NumeroDocumento { get; init; } = string.Empty;
     public string Nombre { get; init; } = string.Empty;
     public string Telefono { get; init; } = string.Empty;
     public int IdPais { get; init; }

@@ -1,8 +1,13 @@
 # API de Registro de Usuarios
 
-Prueba técnica: servicio en **.NET 8 / C#** para registrar usuarios (nombre,
-teléfono, país, departamento, municipio y dirección) sobre **PostgreSQL**,
-consumiendo la base de datos exclusivamente a través de **stored procedures**.
+Prueba técnica: servicio en **.NET 8 / C#** para registrar usuarios (número de
+documento, nombre, teléfono, país, departamento, municipio y dirección) sobre
+**PostgreSQL**, consumiendo la base de datos exclusivamente a través de
+**stored procedures**.
+
+El **número de documento** es la llave primaria natural de `usuario` (no un
+id autoincremental sin significado): identifica a la persona en el mundo real
+y es lo que se usa en la URL para consultarla (`GET /api/usuarios/{numeroDocumento}`).
 
 ## Arquitectura
 
@@ -10,8 +15,8 @@ El proyecto sigue **arquitectura hexagonal (puertos y adaptadores)**:
 
 ```
 src/
-├── UserRegistration.Domain          Núcleo: entidades y excepciones de dominio.
-│                                     Sin dependencias externas.
+├── UserRegistration.Domain          Núcleo: excepciones de dominio (ValidationAppException,
+│                                     NotFoundException, ConflictException). Sin dependencias externas.
 ├── UserRegistration.Application     Casos de uso + puertos.
 │   ├── Ports/In                     Puertos de entrada (interfaces de los casos de uso).
 │   ├── Ports/Out                    Puertos de salida (interfaces que debe implementar la infraestructura).
@@ -35,8 +40,9 @@ database/
 
 ### Dos niveles de validación
 
-1. **Formato** (`RegistrarUsuarioRequestValidator`, FluentValidation): nombre solo
-   letras/espacios, teléfono `^\+?[0-9]{7,15}$`, ids positivos, longitudes máximas.
+1. **Formato** (`RegistrarUsuarioRequestValidator`, FluentValidation): número de
+   documento `^[0-9]{5,15}$`, nombre solo letras/espacios, teléfono
+   `^\+?[0-9]{7,15}$`, ids de ubicación positivos, longitudes máximas.
 2. **Coherencia referencial** (`RegistrarUsuarioUseCase` + `sp_ubicacion_validar`):
    verifica que el país exista, el departamento exista y pertenezca a ese país, y
    que el municipio exista y pertenezca a ese departamento — antes de insertar.
@@ -53,7 +59,7 @@ respuestas `application/problem+json` consistentes:
 |-----------------------------|------|
 | `ValidationAppException`    | 400  |
 | `NotFoundException`         | 404  |
-| `ConflictException` (FK/unique en Postgres) | 409 |
+| `ConflictException` (documento duplicado, FK/unique en Postgres) | 409 |
 | Cualquier otra              | 500 (sin detalles internos) |
 
 ### Patrones de diseño usados
@@ -104,18 +110,18 @@ dotnet test
 `src/UserRegistration.Api/wwwroot` contiene una página simple (sin build ni
 dependencias) que consume la API: formulario de registro con selects en
 cascada (país → departamento → municipio), errores de validación mostrados
-por campo, y un panel para consultar un usuario por id. Se sirve en `/` del
-mismo puerto de la API (no requiere CORS ni un contenedor aparte).
+por campo, y un panel para consultar un usuario por número de documento. Se
+sirve en `/` del mismo puerto de la API (no requiere CORS ni un contenedor aparte).
 
 ## Endpoints principales
 
-| Método | Ruta                                            | Descripción |
-|--------|--------------------------------------------------|-------------|
-| POST   | `/api/usuarios`                                   | Registra un usuario |
-| GET    | `/api/usuarios/{id}`                              | Consulta un usuario |
-| GET    | `/api/paises`                                     | Lista países |
-| GET    | `/api/paises/{idPais}/departamentos`              | Departamentos de un país |
-| GET    | `/api/departamentos/{idDepartamento}/municipios`  | Municipios de un departamento |
+| Método | Ruta                                                    | Descripción |
+|--------|-----------------------------------------------------------|-------------|
+| POST   | `/api/usuarios`                                            | Registra un usuario |
+| GET    | `/api/usuarios/{numeroDocumento}`                          | Consulta un usuario |
+| GET    | `/api/paises`                                              | Lista países |
+| GET    | `/api/paises/{idPais}/departamentos`                       | Departamentos de un país |
+| GET    | `/api/departamentos/{idDepartamento}/municipios`           | Municipios de un departamento |
 
 ### Ejemplo: registrar usuario
 
@@ -123,6 +129,7 @@ mismo puerto de la API (no requiere CORS ni un contenedor aparte).
 curl -X POST http://localhost:18080/api/usuarios \
   -H "Content-Type: application/json" \
   -d '{
+        "numeroDocumento": "1020304050",
         "nombre": "Juan Camilo Espitia",
         "telefono": "+573001234567",
         "idPais": 1,
@@ -138,4 +145,4 @@ según los datos semilla en `database/02_seed_data.sql`.
 
 Si el municipio no pertenece al departamento/país indicado, la API responde
 `400` con el detalle del campo que falló, en vez de solo comprobar que los
-ids no sean nulos.
+ids no sean nulos. Si el número de documento ya existe, responde `409`.

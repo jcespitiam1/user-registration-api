@@ -12,6 +12,7 @@ namespace UserRegistration.Tests;
 public sealed class RegistrarUsuarioUseCaseTests
 {
     private static RegistrarUsuarioRequest ValidRequest() => new(
+        NumeroDocumento: "1020304050",
         Nombre: "Juan Camilo Espitia",
         Telefono: "+573001234567",
         IdPais: 1,
@@ -77,7 +78,7 @@ public sealed class RegistrarUsuarioUseCaseTests
             .Setup(r => r.ValidarUbicacionAsync(1, 1, 1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(UbicacionValida());
 
-        var respuestaEsperada = new UsuarioResponse { IdUsuario = 42, Nombre = "Juan Camilo Espitia" };
+        var respuestaEsperada = new UsuarioResponse { NumeroDocumento = "1020304050", Nombre = "Juan Camilo Espitia" };
         var usuarioRepo = new Mock<IUsuarioRepository>();
         usuarioRepo
             .Setup(r => r.RegistrarAsync(It.IsAny<RegistrarUsuarioRequest>(), It.IsAny<CancellationToken>()))
@@ -87,7 +88,7 @@ public sealed class RegistrarUsuarioUseCaseTests
 
         var resultado = await useCase.EjecutarAsync(ValidRequest(), CancellationToken.None);
 
-        Assert.Equal(42, resultado.IdUsuario);
+        Assert.Equal("1020304050", resultado.NumeroDocumento);
         usuarioRepo.Verify(r => r.RegistrarAsync(It.IsAny<RegistrarUsuarioRequest>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

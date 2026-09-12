@@ -107,12 +107,12 @@ AS $$
 $$;
 
 -- ------------------------------------------------------------------------
--- Consulta de un usuario por id, con nombres de ubicación resueltos
--- (útil para el endpoint de verificación GET /api/usuarios/{id}).
+-- Consulta de un usuario por número de documento, con nombres de ubicación
+-- resueltos (útil para el endpoint de verificación GET /api/usuarios/{numeroDocumento}).
 -- ------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION sp_usuario_obtener(p_id_usuario INTEGER)
+CREATE OR REPLACE FUNCTION sp_usuario_obtener(p_numero_documento VARCHAR)
 RETURNS TABLE (
-    id_usuario          INTEGER,
+    numero_documento    VARCHAR,
     nombre              VARCHAR,
     telefono            VARCHAR,
     id_pais             INTEGER,
@@ -128,7 +128,7 @@ LANGUAGE sql
 STABLE
 SET search_path = registro
 AS $$
-    SELECT u.id_usuario, u.nombre, u.telefono,
+    SELECT u.numero_documento, u.nombre, u.telefono,
            u.id_pais, p.nombre,
            u.id_departamento, d.nombre,
            u.id_municipio, m.nombre,
@@ -137,15 +137,17 @@ AS $$
     JOIN pais p ON p.id_pais = u.id_pais
     JOIN departamento d ON d.id_departamento = u.id_departamento
     JOIN municipio m ON m.id_municipio = u.id_municipio
-    WHERE u.id_usuario = p_id_usuario;
+    WHERE u.numero_documento = p_numero_documento;
 $$;
 
 -- ------------------------------------------------------------------------
 -- Registro de usuario. La validación referencial ya fue realizada por la
 -- capa de aplicación (sp_ubicacion_validar) antes de invocar este SP; aun
--- así se protege la integridad con las FKs de la tabla.
+-- así se protege la integridad con las FKs y la PK (numero_documento) de
+-- la tabla.
 -- ------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION sp_usuario_registrar(
+    p_numero_documento VARCHAR,
     p_nombre          VARCHAR,
     p_telefono        VARCHAR,
     p_id_pais         INTEGER,
@@ -154,7 +156,7 @@ CREATE OR REPLACE FUNCTION sp_usuario_registrar(
     p_direccion       VARCHAR
 )
 RETURNS TABLE (
-    id_usuario          INTEGER,
+    numero_documento    VARCHAR,
     nombre              VARCHAR,
     telefono            VARCHAR,
     id_pais             INTEGER,
@@ -169,14 +171,11 @@ RETURNS TABLE (
 LANGUAGE plpgsql
 SET search_path = registro
 AS $$
-DECLARE
-    v_id_usuario INTEGER;
 BEGIN
-    INSERT INTO usuario (nombre, telefono, id_pais, id_departamento, id_municipio, direccion)
-    VALUES (p_nombre, p_telefono, p_id_pais, p_id_departamento, p_id_municipio, p_direccion)
-    RETURNING usuario.id_usuario INTO v_id_usuario;
+    INSERT INTO usuario (numero_documento, nombre, telefono, id_pais, id_departamento, id_municipio, direccion)
+    VALUES (p_numero_documento, p_nombre, p_telefono, p_id_pais, p_id_departamento, p_id_municipio, p_direccion);
 
     RETURN QUERY
-    SELECT * FROM sp_usuario_obtener(v_id_usuario);
+    SELECT * FROM sp_usuario_obtener(p_numero_documento);
 END;
 $$;

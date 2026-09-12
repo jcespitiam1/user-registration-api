@@ -27,7 +27,7 @@ public sealed class UsuarioRepository : IUsuarioRepository
         using var connection = await _connectionFactory.CreateOpenConnectionAsync(cancellationToken);
 
         const string sql = "SELECT * FROM registro.sp_usuario_registrar(" +
-                            "@Nombre, @Telefono, @IdPais, @IdDepartamento, @IdMunicipio, @Direccion)";
+                            "@NumeroDocumento, @Nombre, @Telefono, @IdPais, @IdDepartamento, @IdMunicipio, @Direccion)";
 
         var comando = new CommandDefinition(sql, request, cancellationToken: cancellationToken);
 
@@ -35,20 +35,26 @@ public sealed class UsuarioRepository : IUsuarioRepository
         {
             return await connection.QuerySingleAsync<UsuarioResponse>(comando);
         }
-        catch (PostgresException ex) when (ex.SqlState is "23503" or "23505")
+        catch (PostgresException ex) when (ex.SqlState == "23505")
+        {
+            throw new ConflictException(
+                $"Ya existe un usuario registrado con el número de documento '{request.NumeroDocumento}'.");
+        }
+        catch (PostgresException ex) when (ex.SqlState == "23503")
         {
             throw new ConflictException(
                 "El dato entra en conflicto con las restricciones de integridad de la base de datos.");
         }
     }
 
-    public async Task<UsuarioResponse?> ObtenerPorIdAsync(int idUsuario, CancellationToken cancellationToken)
+    public async Task<UsuarioResponse?> ObtenerPorNumeroDocumentoAsync(string numeroDocumento, CancellationToken cancellationToken)
     {
         using var connection = await _connectionFactory.CreateOpenConnectionAsync(cancellationToken);
 
-        const string sql = "SELECT * FROM registro.sp_usuario_obtener(@IdUsuario)";
+        const string sql = "SELECT * FROM registro.sp_usuario_obtener(@NumeroDocumento)";
 
-        var comando = new CommandDefinition(sql, new { IdUsuario = idUsuario }, cancellationToken: cancellationToken);
+        var comando = new CommandDefinition(
+            sql, new { NumeroDocumento = numeroDocumento }, cancellationToken: cancellationToken);
 
         return await connection.QuerySingleOrDefaultAsync<UsuarioResponse>(comando);
     }

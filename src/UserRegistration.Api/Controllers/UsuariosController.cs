@@ -29,16 +29,17 @@ public sealed class UsuariosController : ControllerBase
         [FromBody] RegistrarUsuarioRequest request, CancellationToken cancellationToken)
     {
         var usuario = await _registrarUsuarioUseCase.EjecutarAsync(request, cancellationToken);
-        return CreatedAtAction(nameof(ObtenerPorId), new { idUsuario = usuario.IdUsuario }, usuario);
+        return CreatedAtAction(nameof(ObtenerPorNumeroDocumento), new { numeroDocumento = usuario.NumeroDocumento }, usuario);
     }
 
-    /// <summary>Consulta un usuario previamente registrado.</summary>
-    [HttpGet("{idUsuario:int}")]
+    /// <summary>Consulta un usuario previamente registrado por su número de documento.</summary>
+    [HttpGet("{numeroDocumento}")]
     [ProducesResponseType(typeof(UsuarioResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UsuarioResponse>> ObtenerPorId(int idUsuario, CancellationToken cancellationToken)
+    public async Task<ActionResult<UsuarioResponse>> ObtenerPorNumeroDocumento(
+        string numeroDocumento, CancellationToken cancellationToken)
     {
-        var usuario = await _obtenerUsuarioUseCase.EjecutarAsync(idUsuario, cancellationToken);
+        var usuario = await _obtenerUsuarioUseCase.EjecutarAsync(numeroDocumento, cancellationToken);
         return Ok(usuario);
     }
 }

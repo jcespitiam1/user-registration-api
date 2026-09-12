@@ -14,9 +14,9 @@ public sealed class ObtenerUsuarioUseCase : IObtenerUsuarioUseCase
         _usuarioRepository = usuarioRepository;
     }
 
-    public async Task<UsuarioResponse> EjecutarAsync(int idUsuario, CancellationToken cancellationToken)
+    public async Task<UsuarioResponse> EjecutarAsync(string numeroDocumento, CancellationToken cancellationToken)
     {
-        var usuario = await _usuarioRepository.ObtenerPorIdAsync(idUsuario, cancellationToken);
-        return usuario ?? throw NotFoundException.For("Usuario", idUsuario);
+        var usuario = await _usuarioRepository.ObtenerPorNumeroDocumentoAsync(numeroDocumento, cancellationToken);
+        return usuario ?? throw NotFoundException.For("Usuario", numeroDocumento);
     }
 }

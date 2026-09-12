@@ -9,6 +9,7 @@ public sealed class RegistrarUsuarioRequestValidatorTests
     private readonly RegistrarUsuarioRequestValidator _validator = new();
 
     private static RegistrarUsuarioRequest ValidRequest() => new(
+        NumeroDocumento: "1020304050",
         Nombre: "Juan Camilo Espitia",
         Telefono: "+573001234567",
         IdPais: 1,
@@ -76,5 +77,20 @@ public sealed class RegistrarUsuarioRequestValidatorTests
 
         Assert.False(resultado.IsValid);
         Assert.Contains(resultado.Errors, e => e.PropertyName == nameof(RegistrarUsuarioRequest.IdMunicipio));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("abc12345")]
+    [InlineData("1234")]
+    [InlineData("1234567890123456")]
+    public void NumeroDocumento_invalido_genera_error(string numeroDocumento)
+    {
+        var request = ValidRequest() with { NumeroDocumento = numeroDocumento };
+
+        var resultado = _validator.Validate(request);
+
+        Assert.False(resultado.IsValid);
+        Assert.Contains(resultado.Errors, e => e.PropertyName == nameof(RegistrarUsuarioRequest.NumeroDocumento));
     }
 }

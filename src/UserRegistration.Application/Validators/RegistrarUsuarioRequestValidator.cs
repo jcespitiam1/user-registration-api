@@ -13,9 +13,15 @@ public sealed class RegistrarUsuarioRequestValidator : AbstractValidator<Registr
 {
     private const string NombreRegex = @"^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[ '\-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$";
     private const string TelefonoRegex = @"^\+?[0-9]{7,15}$";
+    private const string NumeroDocumentoRegex = @"^[0-9]{5,15}$";
 
     public RegistrarUsuarioRequestValidator()
     {
+        RuleFor(x => x.NumeroDocumento)
+            .NotEmpty().WithMessage("El número de documento es obligatorio.")
+            .Matches(NumeroDocumentoRegex)
+            .WithMessage("El número de documento debe tener entre 5 y 15 dígitos numéricos.");
+
         RuleFor(x => x.Nombre)
             .NotEmpty().WithMessage("El nombre es obligatorio.")
             .MaximumLength(150).WithMessage("El nombre no debe superar 150 caracteres.")

@@ -10,5 +10,5 @@ public interface IUsuarioRepository
 {
     Task<UsuarioResponse> RegistrarAsync(RegistrarUsuarioRequest request, CancellationToken cancellationToken);
 
-    Task<UsuarioResponse?> ObtenerPorIdAsync(int idUsuario, CancellationToken cancellationToken);
+    Task<UsuarioResponse?> ObtenerPorNumeroDocumentoAsync(string numeroDocumento, CancellationToken cancellationToken);
 }

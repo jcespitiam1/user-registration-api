@@ -17,6 +17,12 @@
       <h2>Registrar usuario</h2>
       <form id="form-registro" novalidate>
         <div class="field">
+          <label for="numero-documento">Número de documento</label>
+          <input type="text" id="numero-documento" name="numero-documento" placeholder="1020304050" required />
+          <span class="error" data-error-for="NumeroDocumento"></span>
+        </div>
+
+        <div class="field">
           <label for="nombre">Nombre</label>
           <input type="text" id="nombre" name="nombre" placeholder="Juan Camilo Espitia" required />
           <span class="error" data-error-for="Nombre"></span>
@@ -68,8 +74,8 @@
       <h2>Consultar usuario</h2>
       <form id="form-consulta">
         <div class="field inline">
-          <label for="consulta-id">Id de usuario</label>
-          <input type="number" id="consulta-id" name="consulta-id" min="1" required />
+          <label for="consulta-id">Número de documento</label>
+          <input type="text" id="consulta-id" name="consulta-id" placeholder="1020304050" required />
           <button type="submit">Buscar</button>
         </div>
       </form>
