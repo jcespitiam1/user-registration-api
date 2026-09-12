@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Usuarios</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Registro de Usuarios</h1>
+    <a class="swagger-link" href="/swagger" target="_blank" rel="noopener">Ver documentación (Swagger)</a>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Registrar usuario</h2>
+      <form id="form-registro" novalidate>
+        <div class="field">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Juan Camilo Espitia" required />
+          <span class="error" data-error-for="Nombre"></span>
+        </div>
+
+        <div class="field">
+          <label for="telefono">Teléfono</label>
+          <input type="text" id="telefono" name="telefono" placeholder="+573001234567" required />
+          <span class="error" data-error-for="Telefono"></span>
+        </div>
+
+        <div class="field">
+          <label for="pais">País</label>
+          <select id="pais" name="pais" required>
+            <option value="">Selecciona un país...</option>
+          </select>
+          <span class="error" data-error-for="IdPais"></span>
+        </div>
+
+        <div class="field">
+          <label for="departamento">Departamento</label>
+          <select id="departamento" name="departamento" required disabled>
+            <option value="">Selecciona un departamento...</option>
+          </select>
+          <span class="error" data-error-for="IdDepartamento"></span>
+        </div>
+
+        <div class="field">
+          <label for="municipio">Municipio</label>
+          <select id="municipio" name="municipio" required disabled>
+            <option value="">Selecciona un municipio...</option>
+          </select>
+          <span class="error" data-error-for="IdMunicipio"></span>
+        </div>
+
+        <div class="field">
+          <label for="direccion">Dirección</label>
+          <input type="text" id="direccion" name="direccion" placeholder="Calle 123 # 45-67" required />
+          <span class="error" data-error-for="Direccion"></span>
+        </div>
+
+        <button type="submit">Registrar</button>
+      </form>
+
+      <div id="registro-resultado" class="resultado" hidden></div>
+    </section>
+
+    <section class="card">
+      <h2>Consultar usuario</h2>
+      <form id="form-consulta">
+        <div class="field inline">
+          <label for="consulta-id">Id de usuario</label>
+          <input type="number" id="consulta-id" name="consulta-id" min="1" required />
+          <button type="submit">Buscar</button>
+        </div>
+      </form>
+
+      <div id="consulta-resultado" class="resultado" hidden></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

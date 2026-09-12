@@ -22,6 +22,8 @@ src/
 │                                     implementando los puertos de salida. Solo llama SPs.
 └── UserRegistration.Api             Adaptador primario (driving): Controllers, middleware
                                       de errores y Program.cs como composition root.
+    └── wwwroot                      Interfaz web (HTML/CSS/JS vanilla) servida como
+                                      archivos estáticos, mismo origen que la API.
 
 tests/UserRegistration.Tests         Pruebas unitarias (validador + caso de uso, con mocks).
 
@@ -69,7 +71,8 @@ respuestas `application/problem+json` consistentes:
 docker compose up --build
 ```
 
-- API + Swagger: http://localhost:18080/swagger
+- Interfaz web: http://localhost:18080/
+- Swagger: http://localhost:18080/swagger
 - PostgreSQL queda expuesto en `localhost:5434` (`postgres`/`postgres`, db `registro_usuarios`).
 
 Los scripts de `database/` se ejecutan automáticamente la primera vez que se
@@ -95,6 +98,14 @@ o mediante la variable de entorno `ConnectionStrings__Postgres`.
 ```bash
 dotnet test
 ```
+
+## Interfaz web
+
+`src/UserRegistration.Api/wwwroot` contiene una página simple (sin build ni
+dependencias) que consume la API: formulario de registro con selects en
+cascada (país → departamento → municipio), errores de validación mostrados
+por campo, y un panel para consultar un usuario por id. Se sirve en `/` del
+mismo puerto de la API (no requiere CORS ni un contenedor aparte).
 
 ## Endpoints principales
 
