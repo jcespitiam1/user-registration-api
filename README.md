@@ -30,7 +30,11 @@ src/
     └── wwwroot                      Interfaz web (HTML/CSS/JS vanilla) servida como
                                       archivos estáticos, mismo origen que la API.
 
-tests/UserRegistration.Tests         Pruebas unitarias (validador + caso de uso, con mocks).
+tests/
+├── UserRegistration.Tests             Pruebas unitarias (validador + caso de uso, con mocks).
+└── UserRegistration.IntegrationTests  Pruebas de integración contra un Postgres real
+                                        (Testcontainers) y contra la API completa
+                                        (WebApplicationFactory).
 
 database/
 ├── 01_create_tables.sql             Esquema: pais, departamento, municipio, usuario.
@@ -101,9 +105,21 @@ o mediante la variable de entorno `ConnectionStrings__Postgres`.
 
 ### Pruebas
 
+Unitarias (rápidas, sin dependencias externas):
+
 ```bash
-dotnet test
+dotnet test tests/UserRegistration.Tests
 ```
+
+De integración (levantan un PostgreSQL real con Testcontainers, corren los
+mismos scripts de `database/` contra él, y prueban los repositorios reales y
+la API completa vía `WebApplicationFactory`; requieren Docker corriendo):
+
+```bash
+dotnet test tests/UserRegistration.IntegrationTests
+```
+
+`dotnet test` a nivel de solución corre ambos proyectos.
 
 ## Interfaz web
 
