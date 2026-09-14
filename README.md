@@ -9,6 +9,24 @@ El **número de documento** es la llave primaria natural de `usuario` (no un
 id autoincremental sin significado): identifica a la persona en el mundo real
 y es lo que se usa en la URL para consultarla (`GET /api/usuarios/{numeroDocumento}`).
 
+![Demo: registro con un teléfono inválido, corrección de los campos y registro exitoso](docs/demo.gif)
+
+## Por qué lo armé así
+
+- **Número de documento como llave, no un id autoincremental.** Un `SERIAL`
+  no significa nada fuera de la base de datos; el número de documento sí
+  identifica a la persona real que se está registrando, y es lo que
+  naturalmente se usaría para buscarla después.
+- **Arquitectura hexagonal**, incluso siendo un servicio chico. Separar
+  puertos/casos de uso de la infraestructura hizo trivial escribir los tests
+  de integración (repositorios reales contra Postgres, sin tocar mocks) sin
+  que la lógica de negocio supiera que existe Postgres.
+- **Los stored procedures se invocan con `SELECT * FROM schema.funcion(...)`**
+  (ver `src/UserRegistration.Infrastructure/Adapters/Persistence`), no con
+  `CommandType.StoredProcedure`. Lo intenté primero de la forma "estándar" y
+  Postgres lo rechazó — `CALL` solo aplica a `PROCEDURE`, no a funciones que
+  devuelven un conjunto de filas.
+
 ## Arquitectura
 
 El proyecto sigue **arquitectura hexagonal (puertos y adaptadores)**:
