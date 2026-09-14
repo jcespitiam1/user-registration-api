@@ -4,11 +4,6 @@ using UserRegistration.Application.Ports.In;
 
 namespace UserRegistration.Api.Controllers;
 
-/// <summary>
-/// Expone los catálogos paramétricos (país, departamento, municipio) para
-/// que un cliente pueda, por ejemplo, alimentar listas en cascada antes de
-/// invocar el registro de usuario.
-/// </summary>
 [ApiController]
 [Route("api")]
 [Produces("application/json")]

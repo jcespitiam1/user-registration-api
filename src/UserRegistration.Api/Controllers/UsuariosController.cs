@@ -20,7 +20,6 @@ public sealed class UsuariosController : ControllerBase
         _obtenerUsuarioUseCase = obtenerUsuarioUseCase;
     }
 
-    /// <summary>Registra un nuevo usuario con su ubicación (país, departamento, municipio).</summary>
     [HttpPost]
     [ProducesResponseType(typeof(UsuarioResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -32,7 +31,6 @@ public sealed class UsuariosController : ControllerBase
         return CreatedAtAction(nameof(ObtenerPorNumeroDocumento), new { numeroDocumento = usuario.NumeroDocumento }, usuario);
     }
 
-    /// <summary>Consulta un usuario previamente registrado por su número de documento.</summary>
     [HttpGet("{numeroDocumento}")]
     [ProducesResponseType(typeof(UsuarioResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

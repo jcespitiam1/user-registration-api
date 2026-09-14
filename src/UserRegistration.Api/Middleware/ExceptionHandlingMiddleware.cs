@@ -5,11 +5,6 @@ using UserRegistration.Domain.Exceptions;
 
 namespace UserRegistration.Api.Middleware;
 
-/// <summary>
-/// Middleware transversal que centraliza el manejo de errores y garantiza
-/// respuestas HTTP consistentes (application/problem+json, RFC 7807) sin
-/// importar en qué capa se haya originado la excepción.
-/// </summary>
 public sealed class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
@@ -52,8 +47,6 @@ public sealed class ExceptionHandlingMiddleware
 
         context.Response.ContentType = "application/problem+json";
         context.Response.StatusCode = (int)statusCode;
-        // Se serializa usando el tipo en tiempo de ejecución (p. ej. ValidationProblemDetails)
-        // en vez del tipo declarado ProblemDetails, para no perder propiedades de las subclases.
         await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails, problemDetails.GetType(), JsonOptions));
     }
 

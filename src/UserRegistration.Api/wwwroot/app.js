@@ -15,8 +15,6 @@ async function apiFetch(path, options) {
   });
 
   const contentType = response.headers.get("content-type") ?? "";
-  // Los errores se devuelven como application/problem+json (RFC 7807),
-  // no application/json, así que basta con buscar "json" en el header.
   const body = contentType.includes("json") ? await response.json() : null;
 
   if (!response.ok) {

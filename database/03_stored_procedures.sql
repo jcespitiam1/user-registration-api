@@ -1,15 +1,5 @@
--- =========================================================================
--- 03_stored_procedures.sql
--- Toda la lectura/escritura desde la API se realiza a través de estos
--- stored procedures (funciones de PostgreSQL). No se ejecutan sentencias
--- SQL dinámicas desde la capa de infraestructura.
--- =========================================================================
-
 SET search_path TO registro;
 
--- ------------------------------------------------------------------------
--- Catálogo: países
--- ------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION sp_pais_listar()
 RETURNS TABLE (
     id_pais INTEGER,
@@ -26,9 +16,6 @@ AS $$
     ORDER BY nombre;
 $$;
 
--- ------------------------------------------------------------------------
--- Catálogo: departamentos por país
--- ------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION sp_departamento_listar_por_pais(p_id_pais INTEGER)
 RETURNS TABLE (
     id_departamento INTEGER,
@@ -47,9 +34,6 @@ AS $$
     ORDER BY nombre;
 $$;
 
--- ------------------------------------------------------------------------
--- Catálogo: municipios por departamento
--- ------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION sp_municipio_listar_por_departamento(p_id_departamento INTEGER)
 RETURNS TABLE (
     id_municipio    INTEGER,
@@ -68,12 +52,6 @@ AS $$
     ORDER BY nombre;
 $$;
 
--- ------------------------------------------------------------------------
--- Validación de coherencia referencial país -> departamento -> municipio.
--- Devuelve una sola fila indicando cuál de las tres validaciones falló,
--- para que la capa de aplicación pueda construir un mensaje de error
--- preciso sin tener que hacer tres consultas separadas.
--- ------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION sp_ubicacion_validar(
     p_id_pais         INTEGER,
     p_id_departamento INTEGER,
@@ -106,10 +84,6 @@ AS $$
         );
 $$;
 
--- ------------------------------------------------------------------------
--- Consulta de un usuario por número de documento, con nombres de ubicación
--- resueltos (útil para el endpoint de verificación GET /api/usuarios/{numeroDocumento}).
--- ------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION sp_usuario_obtener(p_numero_documento VARCHAR)
 RETURNS TABLE (
     numero_documento    VARCHAR,
@@ -140,12 +114,6 @@ AS $$
     WHERE u.numero_documento = p_numero_documento;
 $$;
 
--- ------------------------------------------------------------------------
--- Registro de usuario. La validación referencial ya fue realizada por la
--- capa de aplicación (sp_ubicacion_validar) antes de invocar este SP; aun
--- así se protege la integridad con las FKs y la PK (numero_documento) de
--- la tabla.
--- ------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION sp_usuario_registrar(
     p_numero_documento VARCHAR,
     p_nombre          VARCHAR,

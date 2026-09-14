@@ -2,10 +2,6 @@ using UserRegistration.Application.DTOs;
 
 namespace UserRegistration.Application.Ports.Out;
 
-/// <summary>
-/// Puerto de salida (secundario) hacia las tablas paramétricas de
-/// ubicación (país, departamento, municipio).
-/// </summary>
 public interface IUbicacionRepository
 {
     Task<IReadOnlyList<PaisDto>> ListarPaisesAsync(CancellationToken cancellationToken);

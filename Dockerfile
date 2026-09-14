@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1
 
-# ---------- Etapa de build ----------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
@@ -13,7 +12,6 @@ RUN dotnet restore src/UserRegistration.Api/UserRegistration.Api.csproj
 COPY src/ src/
 RUN dotnet publish src/UserRegistration.Api/UserRegistration.Api.csproj -c Release -o /app/publish --no-restore
 
-# ---------- Etapa final ----------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 

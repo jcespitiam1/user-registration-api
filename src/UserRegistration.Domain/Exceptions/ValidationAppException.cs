@@ -1,10 +1,5 @@
 namespace UserRegistration.Domain.Exceptions;
 
-/// <summary>
-/// Represents any validation failure that must surface as HTTP 400:
-/// field-format errors as well as business/referential-coherence errors
-/// (e.g. el municipio no pertenece al departamento indicado).
-/// </summary>
 public sealed class ValidationAppException : Exception
 {
     public IReadOnlyDictionary<string, string[]> Errors { get; }

@@ -6,13 +6,6 @@ using UserRegistration.Domain.Exceptions;
 
 namespace UserRegistration.Infrastructure.Adapters.Persistence;
 
-/// <summary>
-/// Adaptador secundario: implementa el puerto de salida IUsuarioRepository
-/// consumiendo exclusivamente stored procedures (funciones) de PostgreSQL.
-/// Postgres no soporta CALL sobre funciones que retornan conjuntos de
-/// filas, por lo que se invocan con SELECT * FROM schema.funcion(...),
-/// que es la forma estándar de consumirlas desde un cliente ADO.NET.
-/// </summary>
 public sealed class UsuarioRepository : IUsuarioRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;

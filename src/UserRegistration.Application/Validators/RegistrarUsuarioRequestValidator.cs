@@ -3,12 +3,6 @@ using UserRegistration.Application.DTOs;
 
 namespace UserRegistration.Application.Validators;
 
-/// <summary>
-/// Valida el FORMATO de los campos de entrada. La coherencia referencial
-/// (que el municipio pertenezca al departamento y al país indicados) es
-/// responsabilidad del caso de uso, ya que requiere consultar la base de
-/// datos y por tanto no es una regla de formato.
-/// </summary>
 public sealed class RegistrarUsuarioRequestValidator : AbstractValidator<RegistrarUsuarioRequest>
 {
     private const string NombreRegex = @"^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[ '\-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$";

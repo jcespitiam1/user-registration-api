@@ -1,30 +1,15 @@
--- =========================================================================
--- 02_seed_data.sql
--- Datos base para las tablas paramétricas: país, departamento, municipio.
--- Incluye Colombia (con sus departamentos y algunos municipios) y dos
--- países adicionales (México y Perú) para poder validar la coherencia
--- referencial entre país / departamento / municipio.
--- =========================================================================
-
 SET search_path TO registro;
 
--- ------------------------------------------------------------------------
--- Países
--- ------------------------------------------------------------------------
 INSERT INTO pais (codigo, nombre) VALUES
     ('CO', 'Colombia'),
     ('MX', 'México'),
     ('PE', 'Perú')
 ON CONFLICT (codigo) DO NOTHING;
 
--- ------------------------------------------------------------------------
--- Departamentos / Estados
--- ------------------------------------------------------------------------
 INSERT INTO departamento (id_pais, codigo, nombre)
 SELECT p.id_pais, v.codigo, v.nombre
 FROM pais p
 JOIN (VALUES
-    -- Colombia
     ('CO', 'AMA', 'Amazonas'),
     ('CO', 'ANT', 'Antioquia'),
     ('CO', 'ARA', 'Arauca'),
@@ -58,13 +43,11 @@ JOIN (VALUES
     ('CO', 'VAC', 'Valle del Cauca'),
     ('CO', 'VAU', 'Vaupés'),
     ('CO', 'VID', 'Vichada'),
-    -- México
     ('MX', 'CDMX', 'Ciudad de México'),
     ('MX', 'JAL', 'Jalisco'),
     ('MX', 'NLE', 'Nuevo León'),
     ('MX', 'MEX', 'Estado de México'),
     ('MX', 'YUC', 'Yucatán'),
-    -- Perú
     ('PE', 'LIM', 'Lima'),
     ('PE', 'ARE', 'Arequipa'),
     ('PE', 'CUS', 'Cusco'),
@@ -73,15 +56,11 @@ JOIN (VALUES
 ) AS v(pais_codigo, codigo, nombre) ON v.pais_codigo = p.codigo
 ON CONFLICT (id_pais, codigo) DO NOTHING;
 
--- ------------------------------------------------------------------------
--- Municipios
--- ------------------------------------------------------------------------
 INSERT INTO municipio (id_departamento, codigo, nombre)
 SELECT d.id_departamento, v.mun_codigo, v.nombre
 FROM departamento d
 JOIN pais p ON p.id_pais = d.id_pais
 JOIN (VALUES
-    -- Colombia
     ('CO', 'AMA', 'LET', 'Leticia'),
     ('CO', 'ANT', 'MED', 'Medellín'),
     ('CO', 'ANT', 'ENV', 'Envigado'),
@@ -126,7 +105,6 @@ JOIN (VALUES
     ('CO', 'VAC', 'BUE', 'Buenaventura'),
     ('CO', 'VAU', 'MIT', 'Mitú'),
     ('CO', 'VID', 'PCA', 'Puerto Carreño'),
-    -- México
     ('MX', 'CDMX', 'CUA', 'Cuauhtémoc'),
     ('MX', 'CDMX', 'COY', 'Coyoacán'),
     ('MX', 'JAL', 'GDL', 'Guadalajara'),
@@ -137,7 +115,6 @@ JOIN (VALUES
     ('MX', 'MEX', 'ECA', 'Ecatepec'),
     ('MX', 'YUC', 'MER', 'Mérida'),
     ('MX', 'YUC', 'VAL', 'Valladolid'),
-    -- Perú
     ('PE', 'LIM', 'LIM', 'Lima'),
     ('PE', 'LIM', 'MIR', 'Miraflores'),
     ('PE', 'ARE', 'ARE', 'Arequipa'),

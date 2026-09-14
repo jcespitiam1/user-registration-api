@@ -1,19 +1,9 @@
--- =========================================================================
--- 01_create_tables.sql
--- Esquema relacional: tablas paramétricas (país, departamento, municipio)
--- y tabla de usuario. Motor: PostgreSQL.
--- =========================================================================
-
 CREATE SCHEMA IF NOT EXISTS registro;
 SET search_path TO registro;
 
--- ------------------------------------------------------------------------
--- Tablas paramétricas
--- ------------------------------------------------------------------------
-
 CREATE TABLE IF NOT EXISTS pais (
     id_pais     SERIAL PRIMARY KEY,
-    codigo      VARCHAR(5)  NOT NULL UNIQUE,   -- ej: CO, MX, PE
+    codigo      VARCHAR(5)  NOT NULL UNIQUE,
     nombre      VARCHAR(100) NOT NULL,
     activo      BOOLEAN      NOT NULL DEFAULT TRUE,
     CONSTRAINT uq_pais_nombre UNIQUE (nombre)
@@ -41,10 +31,6 @@ CREATE TABLE IF NOT EXISTS municipio (
 
 CREATE INDEX IF NOT EXISTS ix_departamento_id_pais ON departamento (id_pais);
 CREATE INDEX IF NOT EXISTS ix_municipio_id_departamento ON municipio (id_departamento);
-
--- ------------------------------------------------------------------------
--- Tabla de usuario
--- ------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS usuario (
     numero_documento VARCHAR(15) PRIMARY KEY,

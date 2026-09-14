@@ -4,12 +4,6 @@ using UserRegistration.Application.Ports.Out;
 
 namespace UserRegistration.Infrastructure.Adapters.Persistence;
 
-/// <summary>
-/// Adaptador secundario: implementa el puerto de salida IUbicacionRepository
-/// consumiendo exclusivamente stored procedures (funciones) de PostgreSQL,
-/// invocadas vía SELECT * FROM schema.funcion(...) (ver nota en
-/// <see cref="UsuarioRepository"/> sobre por qué no se usa CommandType.StoredProcedure).
-/// </summary>
 public sealed class UbicacionRepository : IUbicacionRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
